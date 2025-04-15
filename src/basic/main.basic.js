@@ -111,10 +111,10 @@ function removeCartItem(productId) {
 }
 
 function initializeUI() {
-  var root = document.getElementById('app');
-  let container = document.createElement('div');
-  var wrapper = document.createElement('div');
-  let headerText = document.createElement('h1');
+  const root = document.getElementById('app');
+  const container = document.createElement('div');
+  const wrapper = document.createElement('div');
+  const headerText = document.createElement('h1');
 
   // createElement
   cartItemsDisplay = document.createElement('div');
@@ -183,7 +183,7 @@ function setupEventListeners() {
 function setupPromotions() {
   setTimeout(function () {
     setInterval(function () {
-      var luckyItem = PRODUCT_LIST[Math.floor(Math.random() * PRODUCT_LIST.length)];
+      const luckyItem = PRODUCT_LIST[Math.floor(Math.random() * PRODUCT_LIST.length)];
       if (Math.random() < 0.3 && luckyItem.quantity > 0) {
         luckyItem.price = Math.round(luckyItem.price * 0.8);
         alert('번개세일! ' + luckyItem.name + '이(가) 20% 할인 중입니다!');
@@ -195,7 +195,7 @@ function setupPromotions() {
   setTimeout(function () {
     setInterval(function () {
       if (lastSelectedProduct) {
-        var suggest = PRODUCT_LIST.find(function (item) {
+        const suggest = PRODUCT_LIST.find(function (item) {
           return item.id !== lastSelectedProduct && item.quantity > 0;
         });
 
@@ -218,7 +218,7 @@ function main() {
 function updateProductOptions() {
   productSelect.innerHTML = '';
   PRODUCT_LIST.forEach(function (item) {
-    var option = document.createElement('option');
+    const option = document.createElement('option');
     option.value = item.id;
     option.textContent = item.name + ' - ' + item.price + '원';
     if (item.quantity === 0) option.disabled = true;
@@ -229,16 +229,16 @@ function updateProductOptions() {
 function calculateCart() {
   totalAmount = 0;
   itemCount = 0;
-  var cartItems = cartItemsDisplay.children;
-  var subtotal = 0;
+  const cartItems = cartItemsDisplay.children;
+  let subtotal = 0;
 
-  for (var i = 0; i < cartItems.length; i++) {
+  for (let i = 0; i < cartItems.length; i++) {
     (function () {
-      var productId = cartItems[i].id;
-      var currentItem = getProductById(productId);
-      var quantity = getCartItemQuantity(cartItems[i]);
-      var itemTotal = currentItem.price * quantity;
-      var discount = 0;
+      const productId = cartItems[i].id;
+      const currentItem = getProductById(productId);
+      const quantity = getCartItemQuantity(cartItems[i]);
+      const itemTotal = currentItem.price * quantity;
+      let discount = 0;
 
       itemCount += quantity;
       subtotal += itemTotal;
@@ -259,8 +259,8 @@ function calculateCart() {
   // 대량 구매 할인 계산
   let discountRate = 0;
   if (itemCount >= 30) {
-    var bulkDiscount = totalAmount * 0.25;
-    var itemDiscount = subtotal - totalAmount;
+    const bulkDiscount = totalAmount * 0.25;
+    const itemDiscount = subtotal - totalAmount;
 
     if (bulkDiscount > itemDiscount) {
       totalAmount = subtotal * (1 - 0.25);
@@ -281,7 +281,7 @@ function calculateCart() {
   cartTotalDisplay.textContent = '총액: ' + Math.round(totalAmount) + '원';
 
   if (discountRate > 0) {
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     span.className = 'text-green-500 ml-2';
     span.textContent = '(' + (discountRate * 100).toFixed(1) + '% 할인 적용)';
     cartTotalDisplay.appendChild(span);
@@ -293,7 +293,7 @@ function calculateCart() {
 
 const renderBonusPoints = () => {
   bonusPoints = Math.floor(totalAmount / 1000);
-  var pointsTag = document.getElementById('loyalty-points');
+  let pointsTag = document.getElementById('loyalty-points');
 
   if (!pointsTag) {
     pointsTag = document.createElement('span');
@@ -306,7 +306,7 @@ const renderBonusPoints = () => {
 };
 
 function updateStockStatus() {
-  var infoMessage = '';
+  let infoMessage = '';
   PRODUCT_LIST.forEach(function (item) {
     if (item.quantity < 5) {
       infoMessage += item.name + ': ' + (item.quantity > 0 ? '재고 부족 (' + item.quantity + '개 남음)' : '품절') + '\n';
@@ -315,5 +315,4 @@ function updateStockStatus() {
   stockStatusDisplay.textContent = infoMessage;
 }
 
-// 어플리케이션 시작
 main();

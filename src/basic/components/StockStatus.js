@@ -1,4 +1,6 @@
-StockStatus = () => {
+import PRODUCT_LIST from '../constants';
+
+const StockStatus = () => {
     let infoMessage = '';
     PRODUCT_LIST.forEach(function (item) {
         if (item.quantity < 5) {

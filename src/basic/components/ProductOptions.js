@@ -1,4 +1,6 @@
-ProductOptions = () => {
+import PRODUCT_LIST from '../constants';
+
+const ProductOptions = () => {
     let optionsHTML = '';
     PRODUCT_LIST.forEach(function (item) {
         const disabled = item.quantity === 0 ? 'disabled' : '';

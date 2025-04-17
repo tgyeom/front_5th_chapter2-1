@@ -1,13 +1,8 @@
+import PRODUCT_LIST from './constants';
+import { ProductOptions, CartTotal, Points, UIComponents } from './components';
+
 var productSelect, addToCartButton, cartItemsDisplay, cartTotalDisplay, stockStatusDisplay;
 var lastSelectedProduct, bonusPoints = 0, totalAmount = 0, itemCount = 0;
-
-const PRODUCT_LIST = [
-  { id: 'p1', name: '상품1', price: 10000, quantity: 50 },
-  { id: 'p2', name: '상품2', price: 20000, quantity: 30 },
-  { id: 'p3', name: '상품3', price: 30000, quantity: 20 },
-  { id: 'p4', name: '상품4', price: 15000, quantity: 0 },
-  { id: 'p5', name: '상품5', price: 25000, quantity: 10 }
-];
 
 // 헬퍼 함수들
 function getProductById(productId) {
@@ -26,10 +21,7 @@ function createCartItemElement(product) {
   const newItem = document.createElement('div');
   newItem.id = product.id;
   newItem.className = 'flex justify-between items-center mb-2';
-  newItem.innerHTML = '<span>' + product.name + ' - ' + product.price + '원 x 1</span><div>' +
-    '<button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="' + product.id + '" data-change="-1">-</button>' +
-    '<button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="' + product.id + '" data-change="1">+</button>' +
-    '<button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="' + product.id + '">삭제</button></div>';
+  newItem.innerHTML = UIComponents.createCartItemUI(product);
   return newItem;
 }
 
@@ -41,6 +33,7 @@ function addProductToCart(productId) {
   const product = getProductById(productId);
 
   if (!product || product.quantity <= 0) {
+    alert('재고가 부족합니다.');
     return false;
   }
 
@@ -112,49 +105,34 @@ function removeCartItem(productId) {
 
 function initializeUI() {
   const root = document.getElementById('app');
-  const container = document.createElement('div');
-  const wrapper = document.createElement('div');
-  const headerText = document.createElement('h1');
 
-  // createElement
-  cartItemsDisplay = document.createElement('div');
-  cartTotalDisplay = document.createElement('div');
-  productSelect = document.createElement('select');
-  addToCartButton = document.createElement('button');
-  stockStatusDisplay = document.createElement('div');
+  // 메인 UI 템플릿 생성
+  const mainUI = `
+    <div class="bg-gray-100 p-8">
+      <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
+        <h1 class="text-2xl font-bold mb-4">장바구니</h1>
+        <div id="cart-items"></div>
+        <div id="cart-total" class="text-xl font-bold my-4"></div>
+        <div class="flex mb-4">
+          <select id="product-select" class="border rounded p-2 mr-2">
+            ${ProductOptions()}
+          </select>
+          <button id="add-to-cart" class="bg-blue-500 text-white px-4 py-2 rounded">추가</button>
+        </div>
+        <div id="stock-status" class="text-sm text-gray-500 mt-2"></div>
+      </div>
+    </div>
+  `;
 
-  // ID 설정
-  cartItemsDisplay.id = 'cart-items';
-  cartTotalDisplay.id = 'cart-total';
-  productSelect.id = 'product-select';
-  addToCartButton.id = 'add-to-cart';
-  stockStatusDisplay.id = 'stock-status';
+  // UI 렌더링
+  root.innerHTML = mainUI;
 
-  // 클래스 설정
-  container.className = 'bg-gray-100 p-8';
-  wrapper.className = 'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8';
-  headerText.className = 'text-2xl font-bold mb-4';
-  cartTotalDisplay.className = 'text-xl font-bold my-4';
-  productSelect.className = 'border rounded p-2 mr-2';
-  addToCartButton.className = 'bg-blue-500 text-white px-4 py-2 rounded';
-  stockStatusDisplay.className = 'text-sm text-gray-500 mt-2';
-
-  // 텍스트
-  headerText.textContent = '장바구니';
-  addToCartButton.textContent = '추가';
-
-  // 상품 목록 업데이트
-  updateProductOptions();
-
-  // appendChild
-  wrapper.appendChild(headerText);
-  wrapper.appendChild(cartItemsDisplay);
-  wrapper.appendChild(cartTotalDisplay);
-  wrapper.appendChild(productSelect);
-  wrapper.appendChild(addToCartButton);
-  wrapper.appendChild(stockStatusDisplay);
-  container.appendChild(wrapper);
-  root.appendChild(container);
+  // DOM 요소 참조 설정
+  cartItemsDisplay = document.getElementById('cart-items');
+  cartTotalDisplay = document.getElementById('cart-total');
+  productSelect = document.getElementById('product-select');
+  addToCartButton = document.getElementById('add-to-cart');
+  stockStatusDisplay = document.getElementById('stock-status');
 
   // 초기 장바구니 계산
   calculateCart();
@@ -216,14 +194,7 @@ function main() {
 }
 
 function updateProductOptions() {
-  productSelect.innerHTML = '';
-  PRODUCT_LIST.forEach(function (item) {
-    const option = document.createElement('option');
-    option.value = item.id;
-    option.textContent = item.name + ' - ' + item.price + '원';
-    if (item.quantity === 0) option.disabled = true;
-    productSelect.appendChild(option);
-  });
+  productSelect.innerHTML = ProductOptions();
 }
 
 function calculateCart() {
@@ -278,14 +249,8 @@ function calculateCart() {
     discountRate = Math.max(discountRate, 0.1);
   }
 
-  cartTotalDisplay.textContent = '총액: ' + Math.round(totalAmount) + '원';
-
-  if (discountRate > 0) {
-    const span = document.createElement('span');
-    span.className = 'text-green-500 ml-2';
-    span.textContent = '(' + (discountRate * 100).toFixed(1) + '% 할인 적용)';
-    cartTotalDisplay.appendChild(span);
-  }
+  // 카트 총액 UI 업데이트
+  cartTotalDisplay.innerHTML = CartTotal(totalAmount, discountRate);
 
   updateStockStatus();
   renderBonusPoints();
@@ -296,23 +261,14 @@ const renderBonusPoints = () => {
   let pointsTag = document.getElementById('loyalty-points');
 
   if (!pointsTag) {
-    pointsTag = document.createElement('span');
-    pointsTag.id = 'loyalty-points';
-    pointsTag.className = 'text-blue-500 ml-2';
-    cartTotalDisplay.appendChild(pointsTag);
+    cartTotalDisplay.innerHTML += Points(bonusPoints);
+  } else {
+    pointsTag.innerHTML = `(포인트: ${bonusPoints})`;
   }
-
-  pointsTag.textContent = '(포인트: ' + bonusPoints + ')';
 };
 
 function updateStockStatus() {
-  let infoMessage = '';
-  PRODUCT_LIST.forEach(function (item) {
-    if (item.quantity < 5) {
-      infoMessage += item.name + ': ' + (item.quantity > 0 ? '재고 부족 (' + item.quantity + '개 남음)' : '품절') + '\n';
-    }
-  });
-  stockStatusDisplay.textContent = infoMessage;
+  stockStatusDisplay.innerHTML = UIComponents.createStockStatusUI();
 }
 
 main();

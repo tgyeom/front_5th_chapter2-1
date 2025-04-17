@@ -1,5 +1,5 @@
 import PRODUCT_LIST from './constants';
-import { ProductOptions, CartTotal, Points, createCartItemUI, createStockStatusUI } from './components';
+import { ProductOptions, CartTotal, Points, UIComponents } from './components';
 
 // 전역 상태 변수들
 let products = [...PRODUCT_LIST]; // 제품 목록 복사본
@@ -118,7 +118,7 @@ const createCartItemElement = (product) => {
   const itemEl = document.createElement('div');
   itemEl.id = product.id;
   itemEl.className = 'flex justify-between items-center mb-2';
-  itemEl.innerHTML = createCartItemUI(product);
+  itemEl.innerHTML = UIComponents.createCartItemUI(product);
   return itemEl;
 }
 
@@ -141,7 +141,6 @@ const updateQuantity = (productId, change) => {
     return;
   }
 
-  // 재고 확인 (증가할 경우)
   if (change > 0 && product.quantity <= 0) {
     alert('재고가 부족합니다.');
     return;
@@ -226,19 +225,22 @@ const updateCartDisplay = () => {
     }
   }
 
-  // 화요일 할인 (10%)
-  if (new Date().getDay() === 2) {
-    totalAmount *= (1 - 0.1);
-  }
-
   // 할인율 계산
   const discountRate = subtotal > 0 ? (subtotal - totalAmount) / subtotal : 0;
+  let finalDiscountRate = discountRate;
+  let isTuesdayDiscount = false;
+
+  // 화요일 할인 (10%)
+  if (new Date().getDay() === 2) {
+    isTuesdayDiscount = true;
+    totalAmount *= (1 - 0.1);
+  }
 
   // 포인트 계산
   bonusPoints = Math.floor(totalAmount / 1000);
 
   // UI 업데이트
-  updateCartTotalDisplay(discountRate);
+  updateCartTotalDisplay(finalDiscountRate, isTuesdayDiscount);
   updateStockStatusDisplay();
 }
 
@@ -256,9 +258,13 @@ const getQuantityDiscountRate = (productId) => {
 }
 
 // 장바구니 총액 표시 업데이트
-const updateCartTotalDisplay = (discountRate) => {
+const updateCartTotalDisplay = (discountRate, isTuesdayDiscount) => {
   // 총액 정보 업데이트
-  cartTotalEl.innerHTML = CartTotal(totalAmount, discountRate);
+  if (isTuesdayDiscount) {
+    cartTotalEl.innerHTML = `총액: ${Math.round(totalAmount)}원<span class="text-green-500 ml-2">(10.0% 할인 적용)</span>`;
+  } else {
+    cartTotalEl.innerHTML = CartTotal(totalAmount, discountRate);
+  }
 
   // 포인트 정보 추가
   let pointsEl = document.getElementById('loyalty-points');
@@ -271,7 +277,7 @@ const updateCartTotalDisplay = (discountRate) => {
 
 // 재고 상태 표시 업데이트
 const updateStockStatusDisplay = () => {
-  stockStatusEl.innerHTML = createStockStatusUI();
+  stockStatusEl.innerHTML = UIComponents.createStockStatusUI();
 }
 
 // 프로모션 설정

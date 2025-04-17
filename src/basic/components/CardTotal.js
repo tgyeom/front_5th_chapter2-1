@@ -1,4 +1,4 @@
-CartTotal = (amount, discountRate) => {
+const CartTotal = (amount, discountRate) => {
     let html = `총액: ${Math.round(amount)}원`;
 
     if (discountRate > 0) {

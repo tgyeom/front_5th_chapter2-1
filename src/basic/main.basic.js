@@ -1,9 +1,8 @@
 import PRODUCT_LIST from './constants';
-import { ProductOptions, CartTotal, Points, UIComponents } from './components';
+import { ProductOptions, CartTotal, Points, createCartItemUI, createStockStatusUI } from './components';
 
 // 전역 상태 변수들
 let products = [...PRODUCT_LIST]; // 제품 목록 복사본
-let cart = []; // 장바구니 항목
 let lastSelectedProduct = null;
 let bonusPoints = 0;
 let totalAmount = 0;
@@ -17,7 +16,7 @@ let addToCartBtnEl;
 let stockStatusEl;
 
 // 초기화 및 메인 함수
-function initApp() {
+const initApp = () => {
   renderMainUI();
   setupDomElements();
   setupEventListeners();
@@ -26,7 +25,7 @@ function initApp() {
 }
 
 // 메인 UI 렌더링
-function renderMainUI() {
+const renderMainUI = () => {
   const appRoot = document.getElementById('app');
   appRoot.innerHTML = `
     <div class="bg-gray-100 p-8">
@@ -47,7 +46,7 @@ function renderMainUI() {
 }
 
 // DOM 엘리먼트 연결
-function setupDomElements() {
+const setupDomElements = () => {
   cartItemsEl = document.getElementById('cart-items');
   cartTotalEl = document.getElementById('cart-total');
   productSelectEl = document.getElementById('product-select');
@@ -56,7 +55,7 @@ function setupDomElements() {
 }
 
 // 이벤트 리스너 설정
-function setupEventListeners() {
+const setupEventListeners = () => {
   // 장바구니 추가 버튼
   addToCartBtnEl.addEventListener('click', () => {
     addToCart(productSelectEl.value);
@@ -78,12 +77,12 @@ function setupEventListeners() {
 }
 
 // 제품 ID로 제품 찾기
-function findProduct(productId) {
+const findProduct = (productId) => {
   return products.find(product => product.id === productId);
 }
 
 // 장바구니에 제품 추가
-function addToCart(productId) {
+const addToCart = (productId) => {
   const product = findProduct(productId);
 
   // 재고 확인
@@ -115,16 +114,16 @@ function addToCart(productId) {
 }
 
 // 장바구니 항목 요소 생성
-function createCartItemElement(product) {
+const createCartItemElement = (product) => {
   const itemEl = document.createElement('div');
   itemEl.id = product.id;
   itemEl.className = 'flex justify-between items-center mb-2';
-  itemEl.innerHTML = UIComponents.createCartItemUI(product);
+  itemEl.innerHTML = createCartItemUI(product);
   return itemEl;
 }
 
 // 항목 수량 변경
-function updateQuantity(productId, change) {
+const updateQuantity = (productId, change) => {
   const itemEl = document.getElementById(productId);
   const product = findProduct(productId);
 
@@ -157,17 +156,17 @@ function updateQuantity(productId, change) {
 }
 
 // 항목 수량 가져오기
-function getItemQuantity(itemEl) {
+const getItemQuantity = (itemEl) => {
   return parseInt(itemEl.querySelector('span').textContent.split('x ')[1]);
 }
 
 // 항목 수량 표시 업데이트
-function updateItemQuantityDisplay(itemEl, product, quantity) {
+const updateItemQuantityDisplay = (itemEl, product, quantity) => {
   itemEl.querySelector('span').textContent = `${product.name} - ${product.price}원 x ${quantity}`;
 }
 
 // 항목 제거
-function removeCartItem(productId) {
+const removeCartItem = (productId) => {
   const itemEl = document.getElementById(productId);
   const product = findProduct(productId);
 
@@ -187,7 +186,7 @@ function removeCartItem(productId) {
 }
 
 // 장바구니 계산 및 화면 업데이트
-function updateCartDisplay() {
+const updateCartDisplay = () => {
   // 기본 변수 초기화
   totalAmount = 0;
   itemCount = 0;
@@ -244,7 +243,7 @@ function updateCartDisplay() {
 }
 
 // 제품별 대량 구매 할인율 반환
-function getQuantityDiscountRate(productId) {
+const getQuantityDiscountRate = (productId) => {
   const discountRates = {
     'p1': 0.1,  // 10%
     'p2': 0.15, // 15%
@@ -257,7 +256,7 @@ function getQuantityDiscountRate(productId) {
 }
 
 // 장바구니 총액 표시 업데이트
-function updateCartTotalDisplay(discountRate) {
+const updateCartTotalDisplay = (discountRate) => {
   // 총액 정보 업데이트
   cartTotalEl.innerHTML = CartTotal(totalAmount, discountRate);
 
@@ -271,12 +270,12 @@ function updateCartTotalDisplay(discountRate) {
 }
 
 // 재고 상태 표시 업데이트
-function updateStockStatusDisplay() {
-  stockStatusEl.innerHTML = UIComponents.createStockStatusUI();
+const updateStockStatusDisplay = () => {
+  stockStatusEl.innerHTML = createStockStatusUI();
 }
 
 // 프로모션 설정
-function setupPromotions() {
+const setupPromotions = () => {
   // 번개 세일 프로모션 (30초마다)
   setTimeout(() => {
     setInterval(() => {
@@ -317,7 +316,7 @@ function setupPromotions() {
 }
 
 // 제품 선택 옵션 업데이트
-function updateProductOptions() {
+const updateProductOptions = () => {
   productSelectEl.innerHTML = ProductOptions();
 }
 

@@ -1,6 +1,8 @@
 import PRODUCT_LIST from './constants';
 import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandler';
 import { lightningSale, suggestedPromotion } from './service/promotionService';
+import { calculateCartSummary } from './service/cartService';
+import { getQuantityDiscountRate } from './service/discountService';
 import { ProductOptions, CartTotal, Points, UIComponents } from './components';
 
 // 전역 상태 변수들
@@ -174,76 +176,20 @@ const removeCartItem = (productId) => {
 
 // 장바구니 계산 및 화면 업데이트
 const updateCartDisplay = () => {
-  // 기본 변수 초기화
-  totalAmount = 0;
-  itemCount = 0;
-  let subtotal = 0;
+  const summary = calculateCartSummary(
+    cartItemsEl.children,
+    findProduct,
+    getItemQuantity,
+    getQuantityDiscountRate
+  );
 
-  // 장바구니 항목 순회
-  const cartItems = cartItemsEl.children;
-  for (let i = 0; i < cartItems.length; i++) {
-    const item = cartItems[i];
-    const productId = item.id;
-    const product = findProduct(productId);
-    const quantity = getItemQuantity(item);
-    const itemPrice = product.price * quantity;
+  totalAmount = summary.totalAmount;
+  itemCount = summary.itemCount;
+  bonusPoints = summary.bonusPoints;
 
-    itemCount += quantity;
-    subtotal += itemPrice;
-
-    // 수량 할인 적용
-    let discount = 0;
-    if (quantity >= 10) {
-      // 제품별 대량 구매 할인율
-      discount = getQuantityDiscountRate(productId);
-    }
-
-    // 할인 적용된 가격 합산
-    totalAmount += itemPrice * (1 - discount);
-  }
-
-  // 대량 구매 할인 (30개 이상 구매 시)
-  if (itemCount >= 30) {
-    const bulkDiscount = subtotal * 0.25; // 25% 할인
-    const itemDiscount = subtotal - totalAmount; // 이미 적용된 할인
-
-    // 더 많은 할인을 제공하는 옵션 선택
-    if (bulkDiscount > itemDiscount) {
-      totalAmount = subtotal * (1 - 0.25);
-    }
-  }
-
-  // 할인율 계산
-  const discountRate = subtotal > 0 ? (subtotal - totalAmount) / subtotal : 0;
-  let finalDiscountRate = discountRate;
-  let isTuesdayDiscount = false;
-
-  // 화요일 할인 (10%)
-  if (new Date().getDay() === 2) {
-    isTuesdayDiscount = true;
-    totalAmount *= (1 - 0.1);
-  }
-
-  // 포인트 계산
-  bonusPoints = Math.floor(totalAmount / 1000);
-
-  // UI 업데이트
-  updateCartTotalDisplay(finalDiscountRate, isTuesdayDiscount);
+  updateCartTotalDisplay(summary.discountRate, summary.isTuesdayDiscount);
   updateStockStatusDisplay();
-}
-
-// 제품별 대량 구매 할인율 반환
-const getQuantityDiscountRate = (productId) => {
-  const discountRates = {
-    'p1': 0.1,  // 10%
-    'p2': 0.15, // 15%
-    'p3': 0.2,  // 20%
-    'p4': 0.05, // 5%
-    'p5': 0.25  // 25%
-  };
-
-  return discountRates[productId] || 0;
-}
+};
 
 // 장바구니 총액 표시 업데이트
 const updateCartTotalDisplay = (discountRate, isTuesdayDiscount) => {

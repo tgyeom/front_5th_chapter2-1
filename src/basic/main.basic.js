@@ -1,4 +1,4 @@
-import PRODUCT_LIST from './constants';
+import { PRODUCT_LIST } from './constants';
 import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandler';
 import { lightningSale, suggestedPromotion } from './service/promotionService';
 import { calculateCartSummary } from './service/cartService';

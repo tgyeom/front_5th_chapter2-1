@@ -1,4 +1,4 @@
-import PRODUCT_LIST from '../constants';
+import { PRODUCT_LIST } from '../constants';
 
 const StockStatus = () => {
     let infoMessage = '';

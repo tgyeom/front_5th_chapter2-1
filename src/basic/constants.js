@@ -6,4 +6,9 @@ const PRODUCT_LIST = [
     { id: 'p5', name: '상품5', price: 25000, quantity: 10 }
 ];
 
-export default PRODUCT_LIST;
+const CLASS = {
+    quantityChange: 'quantity-change',
+    removeItem: 'remove-item'
+}
+
+export { PRODUCT_LIST, CLASS };

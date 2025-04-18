@@ -3,14 +3,15 @@ import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandl
 import { lightningSale, suggestedPromotion } from './service/promotionService';
 import { calculateCartSummary } from './service/cartService';
 import { getQuantityDiscountRate } from './service/discountService';
-import { ProductOptions, CartTotal, Points, UIComponents } from './components';
+import { UIComponents } from './components';
 
-// 전역 상태 변수들
-let products = [...PRODUCT_LIST]; // 제품 목록 복사본
-let lastSelectedProduct = null;
-let bonusPoints = 0;
-let totalAmount = 0;
-let itemCount = 0;
+const cartState = {
+  products: [...PRODUCT_LIST],
+  lastSelectedProduct: null,
+  bonusPoints: 0,
+  totalAmount: 0,
+  itemCount: 0,
+};
 
 // DOM 엘리먼트 참조
 let cartItemsEl;
@@ -39,7 +40,7 @@ const renderMainUI = () => {
         <div id="cart-total" class="text-xl font-bold my-4"></div>
         <div class="flex mb-4">
           <select id="product-select" class="border rounded p-2 mr-2">
-            ${ProductOptions()}
+            ${UIComponents.ProductOptions()}
           </select>
           <button id="add-to-cart" class="bg-blue-500 text-white px-4 py-2 rounded">추가</button>
         </div>
@@ -68,7 +69,7 @@ const setupEventListeners = () => {
 
 // 제품 ID로 제품 찾기
 const findProduct = (productId) => {
-  return products.find(product => product.id === productId);
+  return cartState.products.find(product => product.id === productId);
 }
 
 // 장바구니에 제품 추가
@@ -97,7 +98,7 @@ const addToCart = (productId) => {
   }
 
   // 마지막 선택 제품 기록 (추천용)
-  lastSelectedProduct = productId;
+  cartState.lastSelectedProduct = productId;
 
   // 장바구니 다시 계산
   updateCartDisplay();
@@ -108,7 +109,7 @@ const createCartItemElement = (product) => {
   const itemEl = document.createElement('div');
   itemEl.id = product.id;
   itemEl.className = 'flex justify-between items-center mb-2';
-  itemEl.innerHTML = UIComponents.createCartItemUI(product);
+  itemEl.innerHTML = UIComponents.CartItem(product);
   return itemEl;
 }
 
@@ -183,9 +184,9 @@ const updateCartDisplay = () => {
     getQuantityDiscountRate
   );
 
-  totalAmount = summary.totalAmount;
-  itemCount = summary.itemCount;
-  bonusPoints = summary.bonusPoints;
+  cartState.totalAmount = summary.totalAmount;
+  cartState.itemCount = summary.itemCount;
+  cartState.bonusPoints = summary.bonusPoints;
 
   updateCartTotalDisplay(summary.discountRate, summary.isTuesdayDiscount);
   updateStockStatusDisplay();
@@ -195,30 +196,30 @@ const updateCartDisplay = () => {
 const updateCartTotalDisplay = (discountRate, isTuesdayDiscount) => {
   // 총액 정보 업데이트
   if (isTuesdayDiscount) {
-    cartTotalEl.innerHTML = `총액: ${Math.round(totalAmount)}원<span class="text-green-500 ml-2">(10.0% 할인 적용)</span>`;
+    cartTotalEl.innerHTML = `총액: ${Math.round(cartState.totalAmount)}원<span class="text-green-500 ml-2">(10.0% 할인 적용)</span>`;
   } else {
-    cartTotalEl.innerHTML = CartTotal(totalAmount, discountRate);
+    cartTotalEl.innerHTML = UIComponents.CartTotal(cartState.totalAmount, discountRate);
   }
 
   // 포인트 정보 추가
   let pointsEl = document.getElementById('loyalty-points');
   if (!pointsEl) {
-    cartTotalEl.innerHTML += Points(bonusPoints);
+    cartTotalEl.innerHTML += UIComponents.Points(cartState.bonusPoints);
   } else {
-    pointsEl.innerHTML = `(포인트: ${bonusPoints})`;
+    pointsEl.innerHTML = `(포인트: ${cartState.bonusPoints})`;
   }
 }
 
 // 재고 상태 표시 업데이트
 const updateStockStatusDisplay = () => {
-  stockStatusEl.innerHTML = UIComponents.createStockStatusUI();
+  stockStatusEl.innerHTML = UIComponents.StockStatus();
 }
 
 // 프로모션 설정
 const setupPromotions = () => {
   setTimeout(() => {
     setInterval(() => {
-      lightningSale(products, updateProductOptions);
+      lightningSale(cartState.products, updateProductOptions);
     }, 30000);
   }, Math.random() * 10000);
 
@@ -233,7 +234,7 @@ const setupPromotions = () => {
 
 // 제품 선택 옵션 업데이트
 const updateProductOptions = () => {
-  productSelectEl.innerHTML = ProductOptions();
+  productSelectEl.innerHTML = UIComponents.ProductOptions();
 }
 
 initApp();

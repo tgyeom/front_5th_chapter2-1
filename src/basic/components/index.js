@@ -4,15 +4,10 @@ import CartTotal from './CartTotal';
 import Points from './Points';
 import StockStatus from './StockStatus';
 
-export {
+export const UIComponents = {
     ProductOptions,
     CartItem,
     CartTotal,
     Points,
     StockStatus
-};
-
-export const UIComponents = {
-    createCartItemUI: CartItem,
-    createStockStatusUI: StockStatus
 };

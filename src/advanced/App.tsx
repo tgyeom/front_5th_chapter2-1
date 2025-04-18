@@ -1,17 +1,15 @@
 import React from "react";
 import { PRODUCT_LIST } from "./constants";
 import useCart from "./hooks/useCart";
-import usePromotion from "./hooks/usePromotion";
 import CartList from "./components/cart/CartList";
 import CartSummary from "./components/cart/CartSummary";
 import ProductSelector from "./components/product/ProductSelector";
 import StockStatusDisplay from "./components/product/StockStatusDisplay";
+import { CartProvider } from "./contexts/CartContext";
 
-const App: React.FC = () => {
-  // 장바구니 커스텀 훅 사용
+const CartApp: React.FC = () => {
   const {
     products,
-    setProducts,
     cartItems,
     cartState,
     selectedProductId,
@@ -19,14 +17,7 @@ const App: React.FC = () => {
     addToCart,
     updateQuantity,
     removeCartItem,
-  } = useCart({ initialProducts: PRODUCT_LIST });
-
-  // 프로모션 커스텀 훅 사용
-  usePromotion({
-    products,
-    setProducts,
-    lastSelectedProduct: cartState.lastSelectedProduct,
-  });
+  } = useCart();
 
   return (
     <div className="bg-gray-100 min-h-screen p-8">
@@ -50,6 +41,14 @@ const App: React.FC = () => {
         <StockStatusDisplay products={products} />
       </div>
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <CartProvider initialProducts={PRODUCT_LIST}>
+      <CartApp />
+    </CartProvider>
   );
 };
 

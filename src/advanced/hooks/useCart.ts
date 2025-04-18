@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getQuantityDiscountRate } from "../service/discountService";
+import { getQuantityDiscountRate } from "../services/discountService";
 
 interface UseCartProps {
   initialProducts: CartOrder.Product[];

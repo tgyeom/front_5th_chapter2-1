@@ -1,4 +1,6 @@
 import PRODUCT_LIST from './constants';
+import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandler';
+import { runLightningSale, runSuggestedPromotion } from './handler/promotionHandler';
 import { ProductOptions, CartTotal, Points, UIComponents } from './components';
 
 // 전역 상태 변수들
@@ -54,27 +56,13 @@ const setupDomElements = () => {
   stockStatusEl = document.getElementById('stock-status');
 }
 
-// 이벤트 리스너 설정
 const setupEventListeners = () => {
-  // 장바구니 추가 버튼
-  addToCartBtnEl.addEventListener('click', () => {
-    addToCart(productSelectEl.value);
-  });
+  addToCartBtnEl.addEventListener('click', handleAddToCartClick(productSelectEl, addToCart));
 
-  // 장바구니 항목 관련 이벤트 위임
-  cartItemsEl.addEventListener('click', (event) => {
-    const target = event.target;
-
-    if (target.classList.contains('quantity-change')) {
-      const productId = target.dataset.productId;
-      const change = parseInt(target.dataset.change);
-      updateQuantity(productId, change);
-    } else if (target.classList.contains('remove-item')) {
-      const productId = target.dataset.productId;
-      removeCartItem(productId);
-    }
-  });
-}
+  cartItemsEl.addEventListener('click', (event) =>
+    handleCartItemsClick(event, updateQuantity, removeCartItem)
+  );
+};
 
 // 제품 ID로 제품 찾기
 const findProduct = (productId) => {
@@ -282,44 +270,20 @@ const updateStockStatusDisplay = () => {
 
 // 프로모션 설정
 const setupPromotions = () => {
-  // 번개 세일 프로모션 (30초마다)
   setTimeout(() => {
     setInterval(() => {
-      const randomProductIndex = Math.floor(Math.random() * products.length);
-      const randomProduct = products[randomProductIndex];
+      runLightningSale(products, updateProductOptions);
+    }, 30000);
+  }, Math.random() * 10000);
 
-      // 30% 확률로 활성화, 재고가 있을 때만
-      if (Math.random() < 0.3 && randomProduct.quantity > 0) {
-        randomProduct.price = Math.round(randomProduct.price * 0.8); // 20% 할인
-        alert('번개세일! ' + randomProduct.name + '이(가) 20% 할인 중입니다!');
-
-        // 제품 옵션 업데이트
-        updateProductOptions();
-      }
-    }, 30000); // 30초 간격
-  }, Math.random() * 10000); // 초기 딜레이 (랜덤)
-
-  // 추천 프로모션 (60초마다)
   setTimeout(() => {
     setInterval(() => {
-      // 마지막 선택 제품이 있을 때만
       if (lastSelectedProduct) {
-        // 마지막 선택 제품이 아닌 다른 제품 중 재고가 있는 것 찾기
-        const suggestedProduct = products.find(product =>
-          product.id !== lastSelectedProduct && product.quantity > 0
-        );
-
-        if (suggestedProduct) {
-          suggestedProduct.price = Math.round(suggestedProduct.price * 0.95); // 5% 할인
-          alert(suggestedProduct.name + '은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!');
-
-          // 제품 옵션 업데이트
-          updateProductOptions();
-        }
+        runSuggestedPromotion(products, lastSelectedProduct, updateProductOptions);
       }
-    }, 60000); // 60초 간격
-  }, Math.random() * 20000); // 초기 딜레이 (랜덤)
-}
+    }, 60000);
+  }, Math.random() * 20000);
+};
 
 // 제품 선택 옵션 업데이트
 const updateProductOptions = () => {

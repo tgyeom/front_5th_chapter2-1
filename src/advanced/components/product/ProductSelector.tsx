@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 interface ProductSelectorProps {
   products: CartOrder.Product[];
@@ -50,4 +50,4 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
   );
 };
 
-export default ProductSelector;
+export default memo(ProductSelector);

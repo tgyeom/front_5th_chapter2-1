@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { CartTotal, Points } from "../UIComponents";
 
 interface CartSummaryProps {
@@ -40,4 +40,4 @@ const CartSummary: React.FC<CartSummaryProps> = ({ cartState }) => {
   );
 };
 
-export default CartSummary;
+export default memo(CartSummary);

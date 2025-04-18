@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { StockStatus } from "../UIComponents";
 
 interface StockStatusDisplayProps {
@@ -25,4 +25,4 @@ const StockStatusDisplay: React.FC<StockStatusDisplayProps> = ({
   );
 };
 
-export default StockStatusDisplay;
+export default memo(StockStatusDisplay);

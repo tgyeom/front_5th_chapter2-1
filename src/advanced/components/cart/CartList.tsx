@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 interface CartListProps {
   cartItems: CartOrder.CartItem[];
@@ -59,4 +59,4 @@ const CartList: React.FC<CartListProps> = ({
   );
 };
 
-export default CartList;
+export default memo(CartList);

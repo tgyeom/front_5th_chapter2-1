@@ -3,7 +3,7 @@ import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandl
 import { lightningSale, suggestedPromotion } from './service/promotionService';
 import { calculateCartSummary } from './service/cartService';
 import { getQuantityDiscountRate } from './service/discountService';
-import { UIComponents } from './components';
+import { UIComponents } from './components/UIComponents';
 
 const cartState = {
   products: [...PRODUCT_LIST],
@@ -100,7 +100,6 @@ const addToCart = (productId) => {
   // 마지막 선택 제품 기록 (추천용)
   cartState.lastSelectedProduct = productId;
 
-  // 장바구니 다시 계산
   updateCartDisplay();
 }
 

@@ -225,8 +225,8 @@ const setupPromotions = () => {
 
   setTimeout(() => {
     setInterval(() => {
-      if (lastSelectedProduct) {
-        suggestedPromotion(products, lastSelectedProduct, updateProductOptions);
+      if (cartState.lastSelectedProduct) {
+        suggestedPromotion(cartState.products, cartState.lastSelectedProduct, updateProductOptions);
       }
     }, 60000);
   }, Math.random() * 20000);

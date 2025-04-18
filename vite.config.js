@@ -12,8 +12,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        basic: './index.basic.html',
-        advanced: './index.advanced.html',
+        basic: './index.html',
       },
     },
   },

@@ -1,5 +1,4 @@
-import { CLASS } from '../constants';
-import { PRODUCT_LIST } from '../constants';
+import { CLASS, PRODUCT_LIST } from '../constants';
 
 const CartTotal = (amount, discountRate) => {
     let html = `총액: ${Math.round(amount)}원`;

@@ -1,8 +1,8 @@
 import { PRODUCT_LIST } from './constants';
-import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandler';
-import { lightningSale, suggestedPromotion } from './service/promotionService';
-import { calculateCartSummary } from './service/cartService';
-import { getQuantityDiscountRate } from './service/discountService';
+import { handleAddToCartClick, handleCartItemsClick } from './handlers/eventHandler';
+import { lightningSale, suggestedPromotion } from './services/promotionService';
+import { calculateCartSummary } from './services/cartService';
+import { getQuantityDiscountRate } from './services/discountService';
 import { UIComponents } from './components/UIComponents';
 
 const cartState = {

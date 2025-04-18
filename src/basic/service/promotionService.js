@@ -1,4 +1,4 @@
-const runLightningSale = (products, updateProductOptions) => {
+const lightningSale = (products, updateProductOptions) => {
     const randomProductIndex = Math.floor(Math.random() * products.length);
     const randomProduct = products[randomProductIndex];
 
@@ -9,7 +9,7 @@ const runLightningSale = (products, updateProductOptions) => {
     }
 };
 
-const runSuggestedPromotion = (products, lastSelectedProduct, updateProductOptions) => {
+const suggestedPromotion = (products, lastSelectedProduct, updateProductOptions) => {
     const suggestedProduct = products.find(
         product => product.id !== lastSelectedProduct && product.quantity > 0
     );
@@ -21,4 +21,4 @@ const runSuggestedPromotion = (products, lastSelectedProduct, updateProductOptio
     }
 };
 
-export { runLightningSale, runSuggestedPromotion };
+export { lightningSale, suggestedPromotion };

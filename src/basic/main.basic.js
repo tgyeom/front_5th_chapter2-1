@@ -1,6 +1,6 @@
 import PRODUCT_LIST from './constants';
 import { handleAddToCartClick, handleCartItemsClick } from './handler/eventHandler';
-import { runLightningSale, runSuggestedPromotion } from './handler/promotionHandler';
+import { lightningSale, suggestedPromotion } from './service/promotionService';
 import { ProductOptions, CartTotal, Points, UIComponents } from './components';
 
 // 전역 상태 변수들
@@ -272,14 +272,14 @@ const updateStockStatusDisplay = () => {
 const setupPromotions = () => {
   setTimeout(() => {
     setInterval(() => {
-      runLightningSale(products, updateProductOptions);
+      lightningSale(products, updateProductOptions);
     }, 30000);
   }, Math.random() * 10000);
 
   setTimeout(() => {
     setInterval(() => {
       if (lastSelectedProduct) {
-        runSuggestedPromotion(products, lastSelectedProduct, updateProductOptions);
+        suggestedPromotion(products, lastSelectedProduct, updateProductOptions);
       }
     }, 60000);
   }, Math.random() * 20000);
